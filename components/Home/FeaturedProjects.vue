@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2 class="uppercase text-xs font-semibold text-gray-400 mb-6">
-      FEATURED PROEJCTS
+      PROJETS MIS EN AVANT
     </h2>
     <div class="space-y-4">
       <AppProjectCard
@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts" setup>
-const { data: projects } = await useAsyncData("projects-home", () =>
-  queryContent("/projects").limit(3).find()
+const { data: projects } = useAsyncData("projects-home", () =>
+  queryContent("/projects").limit(2).find()
 );
 </script>
