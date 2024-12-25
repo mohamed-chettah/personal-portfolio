@@ -2,7 +2,7 @@
   <main class="min-h-screen">
     <AppHeader
       class="mb-12"
-      title="What's in my bag?"
+      title="Ce que j'utilise au quotidien"
       :description="description"
     />
     <div class="space-y-24">
@@ -28,9 +28,9 @@
 
 <script setup>
 const description =
-  "Software I use, gadgets I love, and other things I recommend. Here’s a big list of all of my favorite stuff.";
+  "Les logiciels que j'utilise, les gadgets que j'apprécie et d'autres outils que je recommande. Voici une grande liste de toutes mes ressources préférées ! "
 useSeoMeta({
-  title: "Things I use | Mohamed Chettah",
+  title: "Ce que j'utilise | Mohamed Chettah",
   description,
 });
 const { data: items } = await useAsyncData("uses", () =>
