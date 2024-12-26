@@ -24,8 +24,13 @@ jobs:
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/id_rsa
 
+      - name: Debug SSH Key
+        run: |
+          ssh-add -l
+          ls ~/.ssh/
+
       - name: Test SSH Connection
-        run: ssh -p 5022 -i ~/.ssh/id_rsa uwdbxycj@mohamedchettah.fr "echo success"
+        run: ssh -vvv -p 5022 -i ~/.ssh/id_rsa uwdbxycj@mohamedchettah.fr "echo success"
 
       - name: Install Dependencies and Build
         run: |

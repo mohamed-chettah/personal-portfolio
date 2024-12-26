@@ -28,7 +28,7 @@
 
 <script setup>
 const description =
-  "Awesome things I've found on the internet. This page is still WIP, I want to add search like bmrks.com";
+  "J'ai regroupé ici les meilleures ressources que j'ai trouvées sur Internet. J'en ai pleins dans mes favoris, mais j\'ai sélectionné uniquement celles qui pourraient vraiment vous être utiles.";
 useSeoMeta({
   title: "Bookmarks | Mohamed Chettah",
   description,
