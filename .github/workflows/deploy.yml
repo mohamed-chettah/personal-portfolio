@@ -68,7 +68,7 @@ jobs:
       # 8. Déployer avec rsync
       - name: Deploy Build to Server
         run: |
-          rsync -avz --delete -e "ssh -p ${{ secrets.REMOTE_PORT }} -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa" ./build/ ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/uwdbxycj/portfolio/
+          rsync -avz --delete -e "ssh -p ${{ secrets.REMOTE_PORT }} -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa" ./.output/ ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/uwdbxycj/portfolio/
 
       # 9. Vérifier si le déploiement est réussi
       - name: Verify Deployment
