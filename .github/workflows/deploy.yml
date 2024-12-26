@@ -24,15 +24,37 @@ jobs:
 
 #      - name: Test SSH Connection
 #        run: ssh -vvv -p 5022 -i ~/.ssh/id_rsa uwdbxycj@mohamedchettah.fr "echo success"
-      - name: Deploy Files to Server
-        run: |
-          rsync -avz -e "ssh -p 5022 -i ~/.ssh/id_rsa" ./ uwdbxycj@mohamedchettah.fr:/home/uwdbxycj/portfolio/
 
-      - name: Finalize Deployment
+      - name: Install Dependencies and Build
+        run: |
+          npm install
+          npm run build
+          
+
+      - name: Add server.js file
+        run: |
+          mkdir -p build/server
+          echo "console.log('Server is running');" > build/server/server.js
+
+      - name: Clean Remote Server
         run: |
           ssh -p 5022 -i ~/.ssh/id_rsa uwdbxycj@mohamedchettah.fr << 'EOF'
-            cd /home/uwdbxycj/portfolio
-            npm install
-            npm run build
-            echo "console.log('Server is running');" > build/server/server.js
+            set -e
+            mkdir -p /home/uwdbxycj/portfolio
+            rm -rf /home/uwdbxycj/portfolio/*
+          EOF
+
+      - name: Deploy Build to Server
+        run: |
+          rsync -avz --delete -e "ssh -p 5022 -i ~/.ssh/id_rsa" ./build/ uwdbxycj@mohamedchettah.fr:/home/uwdbxycj/portfolio/
+
+      - name: Verify Deployment
+        run: |
+          ssh -p 5022 -i ~/.ssh/id_rsa uwdbxycj@mohamedchettah.fr << 'EOF'
+            if [ -f /home/uwdbxycj/portfolio/server/server.js ]; then
+              echo "server.js exists"
+            else
+              echo "server.js is missing!"
+              exit 1
+            fi
           EOF
