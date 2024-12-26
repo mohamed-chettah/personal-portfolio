@@ -18,6 +18,7 @@ jobs:
           echo "Adresse IP publique :"
           curl ifconfig.me
 
+
       - name: Setup SSH Key
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
