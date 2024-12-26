@@ -21,6 +21,10 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p 5022 mohamedchettah.fr >> ~/.ssh/known_hosts
+          ssh-add ~/.ssh/id_rsa
+
+      - name: Test SSH Connection
+        run: ssh -p 5022 -i ~/.ssh/id_rsa uwdbxycj@mohamedchettah.fr "echo success"
 
       - name: Install Dependencies and Build
         run: |
@@ -36,15 +40,21 @@ jobs:
         run: |
           ssh -p 5022 -i ~/.ssh/id_rsa uwdbxycj@mohamedchettah.fr << 'EOF'
             set -e
+            mkdir -p /home/uwdbxycj/portfolio
             rm -rf /home/uwdbxycj/portfolio/*
           EOF
 
       - name: Deploy Build to Server
         run: |
-          rsync -avz -e "ssh -p 5022 -i ~/.ssh/id_rsa" ./build/ uwdbxycj@mohamedchettah.fr:/home/uwdbxycj/portfolio/
+          rsync -avz --delete -e "ssh -p 5022 -i ~/.ssh/id_rsa" ./build/ uwdbxycj@mohamedchettah.fr:/home/uwdbxycj/portfolio/
 
       - name: Verify Deployment
         run: |
           ssh -p 5022 -i ~/.ssh/id_rsa uwdbxycj@mohamedchettah.fr << 'EOF'
-            ls -l /home/uwdbxycj/portfolio/
+            if [ -f /home/uwdbxycj/portfolio/server/server.js ]; then
+              echo "server.js exists"
+            else
+              echo "server.js is missing!"
+              exit 1
+            fi
           EOF
