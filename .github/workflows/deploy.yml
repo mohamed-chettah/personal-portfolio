@@ -10,68 +10,64 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Récupère le code source depuis le dépôt
+      # 1. Récupérer le code source depuis le dépôt
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. Affiche l'adresse IP publique utilisée par GitHub Actions
+      # 2. Afficher l'IP publique utilisée par GitHub Actions
       - name: Display Public IP
         run: |
           echo "Adresse IP publique :"
           curl ifconfig.me
 
-      # 3. Configure la clé SSH
+      # 3. Configurer la clé SSH
       - name: Setup SSH Key
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          # Crée le répertoire SSH et ajoute la clé privée
+          # Créer le répertoire SSH et ajouter la clé privée
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-          # Ajoute l'hôte distant aux hôtes connus
+          # Ajouter l'hôte distant aux hôtes connus
           ssh-keyscan -p 5022 146.88.232.234 >> ~/.ssh/known_hosts
 
-      # 4. Vérifie que la clé privée a été correctement copiée
+      # 4. Vérifier la clé privée
       - name: Vérifier la clé privée
         run: |
           echo "Vérification de la clé privée :"
-          head -n 5 ~/.ssh/id_rsa  # Affiche les 5 premières lignes avec *** masqués
+          head -n 5 ~/.ssh/id_rsa  # Affiche les 5 premières lignes masquées
           ls -l ~/.ssh/id_rsa     # Vérifie la taille et les permissions
 
-      # 5. Teste la connexion SSH
+      # 5. Tester la connexion SSH
       - name: Test SSH Connection
-        run: |
-          ssh -vvv -p 5022 -i ~/.ssh/id_rsa uwdbxycj@146.88.232.234 "echo 'Connexion réussie !'"
+        run: ssh -p 5022 -i ~/.ssh/id_rsa uwdbxycj@146.88.232.234 "echo 'Connexion réussie !'"
 
-      # 6. Installe les dépendances et build le projet
+      # 6. Construire le projet
       - name: Install Dependencies and Build
         run: |
           npm install
           npm run build
 
-      # 7. Crée un fichier server.js pour test
+      # 7. Créer un fichier server.js
       - name: Add server.js file
         run: |
-          mkdir -p build/server
-          echo "console.log('Server is running');" > build/server/server.js
+          mkdir -p .output/server
+          echo "console.log('Server is running');" > .output/server/server.js
 
-      # 8. Nettoie le répertoire distant
-      - name: Clean Remote Server
-        run: |
-          ssh -p 5022 -i ~/.ssh/id_rsa uwdbxycj@146.88.232.234 << 'EOF'
-            set -e
-            mkdir -p /home/uwdbxycj/portfolio
-            rm -rf /home/uwdbxycj/portfolio/*
-          EOF
+      # 8. Déployer avec easingthemes/ssh-deploy@v2.1.4
+      - name: Deploy project with SSH
+        uses: easingthemes/ssh-deploy@v2.1.4
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
+          SOURCE: ".output"  # Répertoire source
+          TARGET: "/home/uwdbxycj/portfolio"  # Répertoire cible sur le serveur
 
-      # 9. Déploie le build vers le serveur distant
-      - name: Deploy Build to Server
-        run: |
-          rsync -avz --delete -e "ssh -p 5022 -i ~/.ssh/id_rsa" ./build/ uwdbxycj@146.88.232.234:/home/uwdbxycj/portfolio/
-
-      # 10. Vérifie que le déploiement a réussi
+      # 9. Vérifier si le déploiement est réussi
       - name: Verify Deployment
         run: |
           ssh -p 5022 -i ~/.ssh/id_rsa uwdbxycj@146.88.232.234 << 'EOF'
