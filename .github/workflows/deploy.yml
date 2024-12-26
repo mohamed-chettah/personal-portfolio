@@ -13,6 +13,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Display Public IP
+        run: |
+          echo "Adresse IP publique :"
+          curl ifconfig.me
+
       - name: Setup SSH Key
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -22,14 +27,18 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p 5022 mohamedchettah.fr >> ~/.ssh/known_hosts
 
-#      - name: Test SSH Connection
-#        run: ssh -vvv -p 5022 -i ~/.ssh/id_rsa uwdbxycj@mohamedchettah.fr "echo success"
+      - name: Vérifier le contenu de la clé privée
+        run: |
+          echo "Premières lignes de la clé privée :"
+          head -n 5 ~/.ssh/id_rsa
+
+      - name: Test SSH Connection
+        run: ssh -p 5022 -i ~/.ssh/id_rsa uwdbxycj@mohamedchettah.fr "echo success"
 
       - name: Install Dependencies and Build
         run: |
           npm install
           npm run build
-          
 
       - name: Add server.js file
         run: |
