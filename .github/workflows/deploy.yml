@@ -29,6 +29,7 @@ jobs:
         run: |
           npm install
           npm run build
+          
 
       - name: Add server.js file
         run: |
