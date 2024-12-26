@@ -57,7 +57,14 @@ jobs:
           npm install
           npm run build
 
-      # 7. Préparer le serveur distant
+      # 7. Créer un fichier server.js et modifier package.json
+      - name: Create server.js and Update package.json
+        run: |
+          mkdir -p .output/server
+          echo "import('./index.mjs')" > .output/server/server.js
+          jq '.type="commonjs"' .output/server/package.json > .output/server/package_tmp.json && mv .output/server/package_tmp.json .output/server/package.json
+
+      # 8. Préparer le serveur distant
       - name: Préparer répertoire distant
         run: |
           ssh -p ${{ secrets.REMOTE_PORT }} -i ~/.ssh/id_rsa ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
@@ -65,12 +72,12 @@ jobs:
             rm -rf /home/uwdbxycj/portfolio/*
           EOF
 
-      # 8. Déployer avec rsync
+      # 9. Déployer avec rsync
       - name: Deploy Build to Server
         run: |
           rsync -avz --delete -e "ssh -p ${{ secrets.REMOTE_PORT }} -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa" ./.output/ ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/uwdbxycj/portfolio/
 
-      # 9. Vérifier si le déploiement est réussi
+      # 10. Vérifier si le déploiement est réussi
       - name: Verify Deployment
         run: |
           ssh -p ${{ secrets.REMOTE_PORT }} -i ~/.ssh/id_rsa ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
