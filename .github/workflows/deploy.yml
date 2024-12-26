@@ -17,21 +17,24 @@ jobs:
       # 2. Afficher l'IP publique utilisée par GitHub Actions
       - name: Display Public IP
         run: |
-          echo "Adresse IP publique :"
+          echo "Adresse IP publique utilisée par GitHub Actions :"
           curl ifconfig.me
 
-      # 3. Configurer la clé SSH
+      # 3. Configurer la clé SSH et l'hôte distant
       - name: Setup SSH Key
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          # Créer le répertoire SSH et ajouter la clé privée
+          # Créer le répertoire .ssh
           mkdir -p ~/.ssh
+          
+          # Ajouter la clé privée
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-
+          
           # Ajouter l'hôte distant aux hôtes connus
-          ssh-keyscan -p 5022 146.88.232.234 >> ~/.ssh/known_hosts
+          ssh-keyscan -p ${{ secrets.REMOTE_PORT }} ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
 
       # 4. Vérifier la clé privée
       - name: Vérifier la clé privée
@@ -42,7 +45,7 @@ jobs:
 
       # 5. Tester la connexion SSH
       - name: Test SSH Connection
-        run: ssh -p 5022 -i ~/.ssh/id_rsa uwdbxycj@146.88.232.234 "echo 'Connexion réussie !'"
+        run: ssh -p ${{ secrets.REMOTE_PORT }} -i ~/.ssh/id_rsa ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} "echo 'Connexion réussie !'"
 
       # 6. Construire le projet
       - name: Install Dependencies and Build
@@ -70,7 +73,7 @@ jobs:
       # 9. Vérifier si le déploiement est réussi
       - name: Verify Deployment
         run: |
-          ssh -p 5022 -i ~/.ssh/id_rsa uwdbxycj@146.88.232.234 << 'EOF'
+          ssh -p ${{ secrets.REMOTE_PORT }} -i ~/.ssh/id_rsa ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
             if [ -f /home/uwdbxycj/portfolio/server/server.js ]; then
               echo "server.js exists"
             else
