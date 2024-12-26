@@ -58,7 +58,6 @@ const items = [
     name: "Ce que j'utilise au quotidien",
     path: "/whats-in-my-bag",
     icon: "solar:backpack-outline",
-
   },
   {
     name: "Bookmarks",
