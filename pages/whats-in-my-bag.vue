@@ -7,19 +7,19 @@
     />
     <div class="space-y-24">
       <ul class="space-y-8">
-        <AppUsesHeader title="Hardware" />
+        <AppUsesHeader title="Equipement" />
         <AppUsesItem v-for="(item, id) in hardware" :key="id" :item="item" />
       </ul>
       <ul class="space-y-8">
-        <AppUsesHeader title="Software" />
+        <AppUsesHeader title="Logiciels" />
         <AppUsesItem v-for="(item, id) in software" :key="id" :item="item" />
       </ul>
       <ul class="space-y-8">
-        <AppUsesHeader title="Desk" />
+        <AppUsesHeader title="Ordinateur" />
         <AppUsesItem v-for="(item, id) in desk" :key="id" :item="item" />
       </ul>
       <ul class="space-y-8">
-        <AppUsesHeader title="Other" />
+        <AppUsesHeader title="Autres" />
         <AppUsesItem v-for="(item, id) in other" :key="id" :item="item" />
       </ul>
     </div>
