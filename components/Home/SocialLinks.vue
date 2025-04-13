@@ -29,10 +29,10 @@ const links = [
     url: "https://www.linkedin.com/in/mohamed-chettah/",
     icon: "mdi:linkedin",
   },
-  {
-    name: "GitHub",
-    url: "https://github.com/mohamed-chettah",
-    icon: "mdi:github",
-  },
+  // {
+  //   name: "GitHub",
+  //   url: "https://github.com/mohamed-chettah",
+  //   icon: "mdi:github",
+  // },
 ];
 </script>
